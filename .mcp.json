@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "weekly-report": {
+      "command": "C:\1.devkjh\weekly_report\.venv\Scripts\python.exe",
+      "args": ["C:\1.devkjh\weekly_report\mcp_server.py"]
+    }
+  }
+}

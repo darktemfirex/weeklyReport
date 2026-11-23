@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주간보고 작성 자동화 Agent</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>주간보고 작성 자동화 <span class="accent">Agent</span></h1>
+    <p class="tagline">직전 보고서를 읽고 다음 주 보고서를 AI가 완성합니다</p>
+  </header>
+
+  <section id="workflow" class="workflow">
+    <div class="wf-head">
+      <h2>Agent Workflow <small>진행되면 지나온 노드가 표시됩니다</small></h2>
+      <span id="wf-summary" class="wf-summary"></span>
+      <button id="wf-toggle" type="button" class="btn btn-ghost btn-sm wf-toggle">접기</button>
+    </div>
+    <div id="wf-body">
+      <div id="wf-diagram" class="wf-diagram"></div>
+      <div class="wf-legend" id="wf-legend"></div>
+      <div id="wf-detail" class="wf-detail"></div>
+    </div>
+  </section>
+
+  <main>
+    <div id="banner" class="banner" hidden></div>
+
+    <!-- 1. 직전 보고서 -->
+    <section id="step-start" class="card" hidden>
+      <h2>직전 주간보고</h2>
+      <p class="hint">직전 주간보고 hwpx를 첨부하세요. 첨부하지 않으면 data 폴더의 최신 파일을 사용합니다.</p>
+      <label class="file">
+        <span>hwpx 파일 첨부</span>
+        <input type="file" id="file" accept=".hwpx">
+      </label>
+      <div id="need-date" class="row" hidden>
+        <label>파일명에서 보고일을 알 수 없습니다. 이 보고서의 보고일(월요일)
+          <input type="date" id="fallback-date">
+        </label>
+      </div>
+      <div id="info" class="info"></div>
+      <div class="actions"><button id="btn-start" class="btn btn-primary btn-lg" disabled>시작 (직전 보고서 읽기)</button></div>
+    </section>
+
+    <!-- 2. 내용 입력 -->
+    <section id="step-confirm" hidden>
+      <div class="card card-this">
+        <h2>1. 금주 계획사항 <small id="week-this"></small></h2>
+        <div id="cands-this"></div>
+        <div id="new-this"></div>
+        <button id="btn-add-this" type="button" class="btn btn-add btn-this">+ 금주 신규 건 추가</button>
+      </div>
+      <div class="card card-next">
+        <h2>2. 차주 계획사항 <small id="week-next"></small></h2>
+        <div id="cands-next"></div>
+        <div id="new-next"></div>
+        <button id="btn-add-next" type="button" class="btn btn-add btn-next">+ 차주 신규 건 추가</button>
+      </div>
+      <div class="card card-csr">
+        <h2>3. CSR 처리현황 <small id="csr-period"></small></h2>
+        <div class="grid5">
+          <label>요청건수<input type="number" id="csr-requested" min="0" value="0"></label>
+          <label>처리건수<input type="number" id="csr-handled" min="0" value="0"></label>
+          <label>전화문의<input type="number" id="csr-calls" min="0" value="0"></label>
+          <label>장애 발생<input type="number" id="csr-outages" min="0" value="0"></label>
+          <label>적기복구<input type="number" id="csr-on-time" min="0" value="0"></label>
+        </div>
+      </div>
+      <div class="card sticky-bar">
+        <div id="count" class="count"></div>
+        <ul id="errors" class="errors"></ul>
+        <div class="actions"><button id="btn-generate" class="btn btn-primary btn-lg" disabled>생성</button></div>
+      </div>
+    </section>
+
+    <!-- 3. 미리보기·승인 -->
+    <section id="step-approve" class="card" hidden>
+      <h2>미리보기 <small>검증 통과 · 신규 등록분은 강조되어 있습니다</small></h2>
+      <div id="pv-legend" class="pv-legend"></div>
+      <div id="pv-items" class="pv-items"></div>
+      <details class="pv-raw"><summary>텍스트 원문 보기</summary><pre id="preview"></pre></details>
+      <label id="overwrite-row" class="check" hidden>
+        <input type="checkbox" id="overwrite"> 같은 이름의 보고서가 이미 있습니다. 덮어쓰기에 동의합니다.
+      </label>
+      <div class="actions">
+        <button id="btn-approve" class="btn btn-success btn-lg">승인 · hwpx 저장</button>
+        <input type="text" id="reject-reason" placeholder="반려 사유">
+        <button id="btn-reject" class="btn btn-danger">반려 · 내용 수정</button>
+      </div>
+    </section>
+
+    <!-- 4. 완료 -->
+    <section id="step-done" class="card" hidden>
+      <h2>결과</h2>
+      <p id="result"></p>
+      <p id="saved-note" class="hint" hidden>한글에서 열어 최종 확인하세요. 형식이 다른 건(진척표 등)은 직전 내용 그대로 복사되어 있습니다.</p>
+      <div class="actions">
+        <a id="download" class="btn btn-primary btn-lg" hidden>hwpx 내려받기</a>
+        <button id="btn-restart" class="btn btn-secondary">처음부터 다시</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="busy" class="busy" hidden>작성·검증 중…</div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
