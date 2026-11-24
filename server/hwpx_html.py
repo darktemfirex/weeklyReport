@@ -102,7 +102,7 @@ def _csr_html(csr) -> str:
 
 STYLE = """
 :root { color-scheme: light; }
-body { margin: 0; background: #d9dde5; font-family: "한컴바탕","함초롬바탕","바탕","Batang",serif; color: #000; }
+body { margin: 0; overflow-x: hidden; background: #d9dde5; font-family: "한컴바탕","함초롬바탕","바탕","Batang",serif; color: #000; }
 .page { width: 1123px; min-height: 794px; box-sizing: border-box; background: #fff; margin: 14px auto; padding: 64px 68px 26px;
         box-shadow: 0 1px 6px rgba(0,0,0,.25); position: relative; }
 table.main { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -113,7 +113,7 @@ td.dept { text-align: center; font-size: 17px; }
 .ln { font-size: 17.3px; line-height: 1.5; white-space: pre; }
 .ln.b { font-weight: 700; }
 table.csr { border-collapse: collapse; margin: 4px 0 8px 28px; font-size: 12.5px; text-align: center; }
-table.csr th, table.csr td { border: 1px solid #000; padding: 2px 5px; font-weight: 700; }
+table.csr th, table.csr td { border: 1px solid #000; padding: 2px 5px; font-weight: 700; font-size: 12.5px; letter-spacing: 0; height: auto; }
 table.csr td { font-weight: 400; background: #fff; } table.csr tr.sum td { font-weight: 700; } table.csr th { background: #e8e8e8; }
 table.csr tr.sum th, table.csr tr.sum td { background: #e4dccb; }
 .rawtbl { margin: 4px 0 4px 28px; }
@@ -122,7 +122,7 @@ table.raw td { border: 1px solid #000; padding: 2px 8px; }
 .pno { text-align: center; font-size: 13px; margin-top: 10px; }
 """
 
-SCALE_JS = "function fit(){var z=Math.min(1,(window.innerWidth-12)/1123);document.querySelectorAll('.page').forEach(function(p){p.style.zoom=z})}addEventListener('resize',fit);fit();"
+SCALE_JS = "function fit(){var z=Math.min(1,(document.documentElement.clientWidth-24)/1123);document.querySelectorAll('.page').forEach(function(p){p.style.zoom=z})}addEventListener('resize',fit);fit();"
 
 
 def render_html(report: Report) -> str:

@@ -409,11 +409,14 @@ function renderPreviewItems(items) {
   box.innerHTML = "";
   for (const [col, label] of [["this", "금주 계획사항"], ["next", "차주 계획사항"]]) {
     const list = items.filter((i) => i.column === col);
+    const colEl = document.createElement("div");
+    colEl.className = "pv-col";
     const head = document.createElement("div");
     head.className = `pv-col-head ${col}`;
     head.textContent = `${label} · ${list.length}건 (신규 ${list.filter((i) => i.new).length}건)`;
-    box.append(head);
-    list.forEach((it) => box.append(pvItemEl(it)));
+    colEl.append(head);
+    list.forEach((it) => colEl.append(pvItemEl(it)));
+    box.append(colEl);
   }
 }
 

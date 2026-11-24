@@ -47,6 +47,7 @@
 
     <!-- 2. 내용 입력 -->
     <section id="step-confirm" hidden>
+      <div class="two-col">
       <div class="card card-this">
         <h2>1. 금주 계획사항 <small id="week-this"></small></h2>
         <div id="cands-this"></div>
@@ -58,6 +59,7 @@
         <div id="cands-next"></div>
         <div id="new-next"></div>
         <button id="btn-add-next" type="button" class="btn btn-add btn-next">+ 차주 신규 건 추가</button>
+      </div>
       </div>
       <div class="card card-csr">
         <h2>3. CSR 처리현황 <small id="csr-period"></small></h2>
@@ -80,7 +82,7 @@
     <section id="step-approve" class="card" hidden>
       <h2>미리보기 <small>검증 통과 · 신규 등록분은 강조되어 있습니다</small></h2>
       <div id="pv-legend" class="pv-legend"></div>
-      <div id="pv-items" class="pv-items"></div>
+      <div id="pv-items" class="pv-items pv-cols"></div>
       <details class="pv-doc" open><summary>서식 미리보기 <small>(한글 문서와 비슷한 모양 · 실제 hwpx와 조금 다를 수 있습니다)</small></summary>
         <iframe id="doc-frame" class="doc-frame" title="서식 미리보기"></iframe></details>
       <details class="pv-raw"><summary>텍스트 원문 보기</summary><pre id="preview"></pre></details>
