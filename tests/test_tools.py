@@ -125,3 +125,9 @@ def test_search_store_includes_upload(uploads, monkeypatch):
     tools.save_upload("20261109.hwpx", sample_bytes())
     tools.tool_search_items("x")
     assert [p.name for p in seen["extra"]] == ["20261109.hwpx"]
+
+
+def test_latest_report_ignores_non_dated_files(tmp_path):
+    for name in ("20261116.hwpx", "20261123.hwpx", "(물류센터)주간보고_복사본.hwpx", "zz메모.hwpx"):
+        (tmp_path / name).write_bytes(b"")
+    assert tools.latest_report_path(tmp_path).name == "20261123.hwpx"

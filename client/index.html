@@ -81,6 +81,8 @@
       <h2>미리보기 <small>검증 통과 · 신규 등록분은 강조되어 있습니다</small></h2>
       <div id="pv-legend" class="pv-legend"></div>
       <div id="pv-items" class="pv-items"></div>
+      <details class="pv-doc" open><summary>서식 미리보기 <small>(한글 문서와 비슷한 모양 · 실제 hwpx와 조금 다를 수 있습니다)</small></summary>
+        <iframe id="doc-frame" class="doc-frame" title="서식 미리보기"></iframe></details>
       <details class="pv-raw"><summary>텍스트 원문 보기</summary><pre id="preview"></pre></details>
       <label id="overwrite-row" class="check" hidden>
         <input type="checkbox" id="overwrite"> 같은 이름의 보고서가 이미 있습니다. 덮어쓰기에 동의합니다.
@@ -96,6 +98,8 @@
     <section id="step-done" class="card" hidden>
       <h2>결과</h2>
       <p id="result"></p>
+      <details id="done-doc" class="pv-doc" open hidden><summary>저장된 hwpx 서식 미리보기 <small>(저장된 파일을 다시 읽어 그린 모양입니다)</small></summary>
+        <iframe id="doc-frame-done" class="doc-frame" title="저장된 보고서 미리보기"></iframe></details>
       <p id="saved-note" class="hint" hidden>한글에서 열어 최종 확인하세요. 형식이 다른 건(진척표 등)은 직전 내용 그대로 복사되어 있습니다.</p>
       <div class="actions">
         <a id="download" class="btn btn-primary btn-lg" hidden>hwpx 내려받기</a>

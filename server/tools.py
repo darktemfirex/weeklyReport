@@ -21,7 +21,7 @@ _extra: list[Path] = []  # 첨부한 보고서: 유사 건 검색 대상에 더�
 
 
 def latest_report_path(data_dir: Path) -> Path:
-    return sorted(Path(data_dir).glob("*.hwpx"))[-1]
+    return sorted(p for p in Path(data_dir).glob("*.hwpx") if re.fullmatch(r"\d{8}", p.stem))[-1]
 
 
 def resolve_report(name: str | None) -> Path:

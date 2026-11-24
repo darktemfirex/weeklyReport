@@ -9,7 +9,7 @@ from datetime import date
 from pathlib import Path
 
 from fastapi import Body, FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from langgraph.types import Command
 from pydantic import BaseModel
@@ -21,6 +21,7 @@ except ImportError:
 
 import graph
 import tools
+from hwpx_html import render_file_html, render_html
 from schedule import calc_weeks, next_report_date
 from validation import validate_answer
 
@@ -250,6 +251,25 @@ def create_app(compose_factory=default_compose_factory) -> FastAPI:
             raise HTTPException(404, "내려받을 보고서가 없습니다.")
         path = Path(match.group(1))
         return FileResponse(path, filename=path.name, media_type="application/octet-stream")
+
+    @app.get("/api/runs/{run_id}/preview.html")
+    def preview_html(run_id: str):
+        """hwpx와 비슷한 서식 미리보기. 승인 단계는 작성 중인 보고서를, 저장 뒤에는 저장된 hwpx를 읽어 그린다"""
+        run = get_run(run_id)
+        values = run.graph.get_state(run.config).values
+        try:
+            if run.stage == "approve" and values.get("report_json"):
+                page = render_html(tools.report_from_json(values["report_json"]))
+            else:
+                match = re.match(r"저장 완료: (.+)", values.get("result", "")) if run.stage == "done" else None
+                if not match or not Path(match.group(1)).exists():
+                    raise HTTPException(404, "미리볼 보고서가 없습니다.")
+                page = render_file_html(Path(match.group(1)))
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(500, f"미리보기를 만들지 못했습니다: {type(e).__name__}: {e}")
+        return HTMLResponse(page, headers={"Cache-Control": "no-store"})
 
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
     return app

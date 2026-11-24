@@ -420,6 +420,7 @@ function renderPreviewItems(items) {
 function renderApprove(data) {
   renderPreviewItems(data.items || []);
   $("preview").textContent = data.preview;
+  $("doc-frame").src = `/api/runs/${state.runId}/preview.html?t=${Date.now()}`;
   $("overwrite").checked = false;
   $("overwrite-row").hidden = !data.existing;
   $("reject-reason").value = "";
@@ -444,6 +445,8 @@ function renderDone(data) {
   $("saved-note").hidden = !data.saved;
   $("download").hidden = !data.saved;
   if (data.saved) $("download").href = `/api/runs/${state.runId}/download`;
+  $("done-doc").hidden = !data.saved;
+  if (data.saved) $("doc-frame-done").src = `/api/runs/${state.runId}/preview.html?t=${Date.now()}`;
   showStep("done");
 }
 $("btn-restart").addEventListener("click", () => location.reload());

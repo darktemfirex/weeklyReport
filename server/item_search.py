@@ -1,5 +1,6 @@
 """과거 보고서 건 RAG: 건마다 Document 하나(타이틀+사유+내용)로 InMemoryVectorStore에 넣고 유사 건을 검색한다"""
 import os
+import re
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,7 +21,7 @@ def default_embeddings():
 def build_store(data_dir: Path, embeddings=None, extra=()) -> InMemoryVectorStore:
     """data_dir의 보고서와 첨부(extra)한 보고서의 건을 색인한다. 이름이 같으면 첨부한 파일이 우선"""
     docs, seen = [], set()
-    paths = {p.stem: p for p in Path(data_dir).glob("*.hwpx")}
+    paths = {p.stem: p for p in Path(data_dir).glob("*.hwpx") if re.fullmatch(r"\d{8}", p.stem)}   # YYYYMMDD.hwpx만(복사본 등은 건너뜀)
     paths.update({Path(p).stem: Path(p) for p in extra})
     for stem in sorted(paths, reverse=True):  # 최신 문구가 우선
         path = paths[stem]
