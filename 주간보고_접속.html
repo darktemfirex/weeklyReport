@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주간보고 접속</title>
+<style>
+  body { font-family: "Malgun Gothic", system-ui, sans-serif; background: #f4f6fa; color: #1f2937; margin: 0; display: grid; place-items: center; min-height: 100vh; }
+  main { background: #fff; border: 1px solid #dde3ee; border-radius: 12px; padding: 32px 36px; width: min(520px, 92vw); }
+  h1 { font-size: 20px; margin: 0 0 8px; }
+  p { line-height: 1.6; margin: 8px 0; }
+  .btn { display: inline-block; background: #2f5bd8; color: #fff; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 8px; }
+  .status { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; }
+  .wait { background: #eef2ff; } .fail { background: #fff1f0; border: 1px solid #f5c2c0; }
+  ol { padding-left: 20px; line-height: 1.8; } code { background: #eef0f5; padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>주간보고 작성 자동화 Agent</h1>
+  <p>서버 PC에 연결합니다. 잠시만 기다려 주세요.</p>
+  <a class="btn" id="go" href="#">바로 열기</a>
+  <div class="status wait" id="status">연결 확인 중…</div>
+  <div id="help" hidden>
+    <p><b>연결되지 않을 때 확인하세요</b></p>
+    <ol>
+      <li>이 PC에 <b>Tailscale</b>이 설치되어 있고 서버와 <b>같은 계정</b>으로 로그인되어 있는지 확인합니다. (설치: tailscale.com/download)</li>
+      <li>Tailscale 상태가 <b>Connected</b>인지 확인합니다.</li>
+      <li>서버 PC가 켜져 있고 절전 상태가 아닌지 확인합니다.</li>
+    </ol>
+  </div>
+</main>
+<script>
+  // 서버 주소: tailnet 전용(Funnel 아님). 주소가 바뀌면 이 한 줄만 고친다.
+  const SERVER = "https://desktop-206hsh9.tail12f4e6.ts.net:8443/";
+  const go = document.getElementById("go"), status = document.getElementById("status"), help = document.getElementById("help");
+  go.href = SERVER;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 6000);
+  // no-cors: 응답 내용은 못 읽지만 서버에 닿으면 성공으로 본다
+  fetch(SERVER, { mode: "no-cors", signal: ctrl.signal, cache: "no-store" })
+    .then(() => { clearTimeout(timer); status.textContent = "연결되었습니다. 이동합니다…"; location.replace(SERVER); })
+    .catch(() => {
+      status.className = "status fail";
+      status.textContent = "서버에 연결하지 못했습니다.";
+      help.hidden = false;
+    });
+</script>
+</body>
+</html>
