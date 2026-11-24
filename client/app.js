@@ -115,6 +115,13 @@ function renderConfirm(run) {
     box.insertAdjacentHTML("beforeend", `<div class="col-title">직전 보고서에서 이어지는 건</div>`);
     if (!list.length) box.insertAdjacentHTML("beforeend", `<div class="empty">후보가 없습니다.</div>`);
     for (const c of list) box.append(candidateEl(c, col));
+    const gone = (run.excluded || []).filter((e) => e.column === col);
+    if (gone.length) {
+      const note = document.createElement("div");
+      note.className = "empty";
+      note.textContent = "완료(예정)일이 지나 자동 제외: " + gone.map((e) => `${e.title} (${e.end})`).join(", ");
+      box.append(note);
+    }
   }
   showStep("confirm");
   state.formReady = true;

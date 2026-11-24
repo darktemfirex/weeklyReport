@@ -87,7 +87,7 @@ def _info(prev_name: str | None) -> dict:
 NODE_INFO = {
     "직전보고 읽기": ("도구", "read_report로 직전 hwpx를 읽어 건·일정·CSR을 파싱합니다."),
     "주차 계산": ("코드", "calc_weeks: 보고일 = 직전 + 7일, 금주·차주·CSR 접수기간(월~금)을 계산합니다."),
-    "이월 후보": ("코드", "일정이 새 금주/차주와 겹치는 직전 보고서 건을 후보로 제안합니다."),
+    "이월 후보": ("코드", "일정이 새 금주/차주와 겹치는 직전 보고서 건을 후보로 제안합니다. 완료(예정)일이 해당 주 시작 전인 건은 자동 제외합니다."),
     "사용자 확인": ("사람", "후보 선택, 신규 건, CSR 입력. 합계 5건 이상, 금주 이월 건은 개발내용 1줄이 필수입니다."),
     "초안": ("LLM", "작성 에이전트가 과거 건을 검색(RAG)하고 전주 주간보고 맥락을 보며 타이틀·사유·개발내용을 보고체로 씁니다."),
     "AI 점검": ("LLM", "AI가 신규 건의 타이틀·사유·개발내용을 한 번 더 점검합니다(보고체·존댓말 금지·타이틀 형식·사실 유지)."),
@@ -163,7 +163,7 @@ def create_app(compose_factory=default_compose_factory) -> FastAPI:
     def describe(run_id: str, run: Run) -> dict:
         out = {"run_id": run_id, "stage": run.stage, "path": list(run.path)}   # 지금까지 실행한 노드(화면의 진행 표시용)
         if run.stage == "confirm":
-            out.update(candidates=run.candidates, weeks=run.paused["주차"], min_items=graph.MIN_ITEMS,
+            out.update(candidates=run.candidates, excluded=run.paused.get("자동제외", []), weeks=run.paused["주차"], min_items=graph.MIN_ITEMS,
                        error=run.paused.get("오류"), reject_reason=run.paused.get("반려사유", ""))
         elif run.stage == "approve":
             out.update(preview=run.paused["미리보기"], existing=run.paused["기존파일"], items=run.paused["항목"])

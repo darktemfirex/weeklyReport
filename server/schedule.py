@@ -95,6 +95,12 @@ def end_date(item: Item) -> date | None:
     return max(days) if days else None
 
 
+def is_finished_before(item: Item, week: Period) -> bool:
+    """완료(예정)일 기준으로 건이 그 주(월~금)가 시작되기 전에 이미 끝났는지. 끝나는 날을 알 수 없으면 False"""
+    end = end_date(item)
+    return end is not None and end < week.start
+
+
 def is_continuing(item: Item, week: Period, existed: bool = True) -> bool:
     """(계속) 판정: 이전 보고(금주는 전주 보고서, 차주는 같은 보고서의 금주)에 있던 건이고
     끝나는 날이 그 주 이후이면 True. 끝나는 주(완료(예정)일이 속한 주)와 새로 시작한 건은 False"""

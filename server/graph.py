@@ -20,7 +20,7 @@ from guardrails import check, check_facts, check_tone, mask
 from layout import content_items, format_added_line, format_content, wrap_reason
 from hwpx_io import Csr, Report
 from hwpx_render import preview_items, preview_text, render_report, verify_hwpx
-from schedule import Item, Period, Phase, Weeks, end_date, fmt_date, fmt_phase, is_continuing, next_report_date, overlaps
+from schedule import Item, Period, Phase, Weeks, end_date, fmt_date, fmt_phase, is_continuing, is_finished_before, next_report_date, overlaps
 
 MAX_RETRY = 2    # 검증 실패 뒤 다시 쓰는 횟수 상한
 MAX_REJECT = 2   # 반려 상한
@@ -67,6 +67,7 @@ class State(TypedDict, total=False):
     prev: str            # 직전 보고서 JSON
     weeks: dict
     candidates: list
+    excluded: list       # 완료(예정)일이 지나 후보에서 자동 제외한 건 [{column, title, end}]
     user: dict           # 사용자 확인 답
     items_this: list
     items_next: list
@@ -177,16 +178,20 @@ def build_graph(compose, call_tool, approver: str = "작성자", review=None):
     def carry(state: State, config):
         prev, weeks = tools.report_from_json(state["prev"]), _weeks(state)
         was = {"this": {i.title for i in prev.this_items}, "next": {i.title for i in prev.next_items}}
-        found = []
+        found, excluded = [], []
         for column, week in (("this", weeks.this_week), ("next", weeks.next_week)):
             for item in _pool(prev).values():
+                if is_finished_before(item, week):   # 완료(예정)일이 그 주 시작 전이면 이미 끝난 건: 자동 제외
+                    excluded.append({"column": column, "title": item.title, "end": end_date(item).isoformat()})
+                    continue
                 # 일정이 없는 원문 복사 건은 직전 보고서에서 있던 칸에만 제안한다(진척표 중복 방지)
                 if overlaps(item, week) or (item.raw is not None and item.title in was[column]):
                     found.append({"column": column, "title": item.title, "page": item.page, "raw": item.raw is not None})
-        return {"candidates": found}
+        config["configurable"]["log"].event("자동제외", 건수=len(excluded), 건=[f"{e['column']}:{e['title']}({e['end']})" for e in excluded])
+        return {"candidates": found, "excluded": excluded}
 
     def confirm(state: State, config):
-        payload = {"후보": state["candidates"], "주차": state["weeks"], "반려사유": state.get("reject_reason", ""),
+        payload = {"후보": state["candidates"], "자동제외": state.get("excluded", []), "주차": state["weeks"], "반려사유": state.get("reject_reason", ""),
                    "입력": "select(칸별 이월 건 제목), new(신규 건들), csr(숫자 5개), continued(건별 (계속) 수정), add_line(금주 이월 건 개발내용 1줄 추가)"}
         answer = interrupt(payload)
         while True:   # 건수가 모자라거나 금주 이월 건의 1줄이 비면 다시 받는다

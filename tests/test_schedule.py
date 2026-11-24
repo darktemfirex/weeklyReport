@@ -1,7 +1,7 @@
 from datetime import date
 
 from schedule import (Item, Period, Phase, calc_weeks, end_date, fmt_date, fmt_phase, is_continuing,
-                       next_report_date, overlaps)
+                       is_finished_before, next_report_date, overlaps)
 
 
 def d(m, day, y=2026):
@@ -90,3 +90,22 @@ def test_in_week_public_helper():
     assert in_week(Phase("개발", d(11, 6), d(11, 12)), Period(d(11, 16), d(11, 20))) is False
     assert in_week(Phase("본적용", d(11, 30), None, open_ended=True), Period(d(12, 7), d(12, 11))) is True
     assert in_week(Phase("미정", None, None), Period(d(11, 9), d(11, 13))) is False
+
+
+def test_finished_before_uses_due_date():
+    this = calc_weeks(d(11, 30)).this_week
+    assert is_finished_before(item(CUT, due=d(11, 24)), this)        # 금주 시작 전에 끝남 -> 제외
+    assert not is_finished_before(item(CUT, due=d(11, 30)), this)    # 금주 첫날에 끝남 -> 금주에는 포함
+    assert not is_finished_before(item(CUT, due=d(12, 16)), this)    # 금주 이후까지 이어짐 -> 포함
+
+
+def test_finished_before_falls_back_to_last_phase_and_unknown_is_kept():
+    this = calc_weeks(d(11, 30)).this_week
+    assert is_finished_before(item(Phase("분석", d(11, 16), d(11, 20))), this)   # 완료일 없음: 마지막 일정 단계 종료일
+    assert not is_finished_before(item(), this)                                  # 끝나는 날을 알 수 없으면 제외하지 않는다
+
+
+def test_finished_before_next_week_boundary():
+    nxt = calc_weeks(d(11, 30)).next_week
+    assert is_finished_before(item(CUT, due=d(12, 4)), nxt)          # 금주에 끝난 건은 차주에서 제외
+    assert not is_finished_before(item(CUT, due=d(12, 7)), nxt)
