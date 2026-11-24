@@ -10,7 +10,7 @@ from hwpx_render import render_report, verify_hwpx
 from item_search import build_store, search_items
 from schedule import Item, Period, Phase, calc_weeks
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 UPLOADS_DIR = ROOT / "uploads"   # 화면에서 첨부한 직전 보고서
 REPORTS_DIR = ROOT / "reports"

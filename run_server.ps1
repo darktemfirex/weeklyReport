@@ -13,4 +13,4 @@ Set-Location $root
 if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) { exit 0 }
 
 New-Item -ItemType Directory -Force -Path "$root\logs" | Out-Null
-& "$root\.venv\Scripts\python.exe" -m uvicorn web:app --host $Address --port $Port *> "$root\logs\server-$Port.log"
+& "$root\.venv\Scripts\python.exe" -m uvicorn web:app --app-dir "$root\server" --host $Address --port $Port *> "$root\logs\server-$Port.log"

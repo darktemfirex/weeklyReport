@@ -8,7 +8,7 @@ from langchain_core.vectorstores import InMemoryVectorStore
 
 from hwpx_io import read_report
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def default_embeddings():

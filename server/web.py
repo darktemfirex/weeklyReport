@@ -1,5 +1,5 @@
 """주간보고 웹 화면 서버 (FastAPI + HTML 폼)
-실행: .venv\\Scripts\\python.exe -m uvicorn web:app --host 127.0.0.1 --port 8501
+실행: .venv\\Scripts\\python.exe -m uvicorn web:app --app-dir server --host 127.0.0.1 --port 8512
 흐름: 직전 보고서 선택/첨부 → 이월 후보·신규 건·CSR 입력(confirm) → 초안·검증 → 미리보기 → 승인(approve) → hwpx 저장·내려받기
 작업 순서는 graph.py(LangGraph)가 맡고, 여기서는 단계마다 입력을 받아 이어 줄 뿐이다."""
 import re
@@ -24,7 +24,7 @@ import tools
 from schedule import calc_weeks, next_report_date
 from validation import validate_answer
 
-STATIC = Path(__file__).resolve().parent / "static"
+STATIC = Path(__file__).resolve().parent.parent / "client"   # 클라이언트 화면. URL은 /static 그대로
 MAX_UPLOAD = 20 * 1024 * 1024
 MAX_RUNS = 50
 

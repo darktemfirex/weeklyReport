@@ -14,7 +14,7 @@ from langchain_core.tools import StructuredTool
 import tools as tool_funcs
 from schedule import Phase, fmt_date, fmt_phase
 
-load_dotenv(Path(__file__).resolve().parent / ".env")
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 COMPOSE_SYSTEM = """너는 주간보고 작성 에이전트다. 입력(사유, 개발내용, 주요일정, 요청부서, 완료일)을 받아 보고서 문구를 쓴다.
 문체: 전주 주간보고처럼 개조식 보고체로 쓴다(체언·명사형 종결, 예: '거래명세서 스캔본 첨부 기능 추가 개발', '수산부 동일 기능 확대 적용 요청').

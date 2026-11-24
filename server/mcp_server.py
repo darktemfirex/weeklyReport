@@ -10,7 +10,7 @@ from pathlib import Path
 
 # 가상환경 밖 파이썬으로 실행됐으면 이 폴더의 .venv 파이썬으로 다시 띄운다
 if sys.prefix == sys.base_prefix:
-    _py = Path(__file__).resolve().parent / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    _py = Path(__file__).resolve().parent.parent / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
     if _py.exists():
         sys.exit(subprocess.call([str(_py), str(Path(__file__).resolve()), *sys.argv[1:]]))
 

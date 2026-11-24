@@ -327,7 +327,7 @@ def test_web_passes_the_factory_review_to_the_graph(tmp_path, monkeypatch):
 # ---- 가시성: 버튼 종류 구분, 금주/차주 색 구분, 고정 버튼바 ----
 import re  # noqa: E402
 
-STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+STATIC_DIR = Path(__file__).resolve().parent.parent / "client"
 VARIANTS = ("btn-primary", "btn-success", "btn-secondary", "btn-danger", "btn-add", "btn-ghost")
 
 
