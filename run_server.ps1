@@ -4,7 +4,7 @@
 # - Log file is per port (logs\server-<port>.log) so an old server holding another log file cannot block startup.
 # NOTE: keep this file ASCII-only. Windows PowerShell 5.1 misreads non-ASCII text in BOM-less UTF-8 files.
 param(
-    [int]$Port = 8501,
+    [int]$Port = 8512,
     [string]$Address = "127.0.0.1"
 )
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path

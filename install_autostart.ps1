@@ -18,4 +18,4 @@ $command = 'powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -F
 $vbs = 'CreateObject("WScript.Shell").Run "' + $command + '", 0, False'
 Set-Content -LiteralPath $target -Value $vbs -Encoding Unicode
 Write-Host "Auto-start installed: $target"
-Write-Host "From the next logon the app is at http://localhost:8501"
+Write-Host "From the next logon the app is at http://localhost:8512"
