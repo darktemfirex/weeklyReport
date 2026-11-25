@@ -388,3 +388,10 @@ def test_preview_styles_distinguish_new_items_from_carried_over_ones():
     assert "color" in new_rule and "font-family" in new_rule and "color" in old_rule and "font-family" in old_rule   # 글자색·글꼴이 다르다
     assert new_rule.split("font-family")[1] != old_rule.split("font-family")[1]
     assert "pv-item" in js and "신규" in js and 'id="pv-items"' in html and 'id="pv-legend"' in html
+
+
+def test_health_is_readable_cross_origin(client):
+    r = client.get("/health")
+    assert r.status_code == 200 and r.json() == {"ok": True}
+    assert r.headers["access-control-allow-origin"] == "*"
+    assert "access-control-allow-origin" not in client.get("/api/workflow").headers   # 다른 경로는 열지 않는다

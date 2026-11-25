@@ -184,6 +184,11 @@ def create_app(compose_factory=default_compose_factory) -> FastAPI:
     def index():
         return FileResponse(STATIC / "index.html")
 
+    @app.get("/health")
+    def health():
+        """접속 안내 페이지(주간보고_접속.html)가 서버가 살아 있는지 읽어 보는 용도. 다른 출처(file://)에서 읽을 수 있게 이 경로만 CORS를 연다"""
+        return JSONResponse({"ok": True}, headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"})
+
     @app.get("/api/workflow")
     def get_workflow():
         return workflow
